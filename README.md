@@ -1,4 +1,4 @@
-# Target Language
+# Specula
 Lower level language (still high) between C and Rust with heavy focus on interapplication communication and concurrency.
 All files must end with `.spc`
 
