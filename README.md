@@ -30,22 +30,20 @@ contract MotionControl {
 }
 
 listener target 0.0.0.0:5050 using MotionControl as Server {
-    node RobotUnit {
-        on MoveCommand { direction, speed } -> Acknowledged {
-            if (battery < 20.0) fail low_battery;
-            print("Moving", direction, "at", speed);
-            moveMotors(direction, speed);
-            respond Ack(true);
-        }
+    on MoveCommand { direction, speed } -> Acknowledged {
+        if (battery < 20.0) fail low_battery;
+        print("Moving", direction, "at", speed);
+        moveMotors(direction, speed);
+        respond Ack(true);
+    }
 
-        after Ack -> Completed {
-            let pos = getPosition();
-            respond Status(pos, battery);
-        }
-        
-        on fail::low_battery {
-            // Do something
-        }
+    after Ack -> Completed {
+        let pos = getPosition();
+        respond Status(pos, battery);
+    }
+    
+    on fail::low_battery {
+        // Do something
     }
 }
 ```
@@ -119,7 +117,7 @@ network - can be serialized and sent across nodes
 ex.
 network[json], network[html], network[specific format here]
 
-fn async compute(x: int [readonly]) -> int [local, mut] {
+fn async compute(x: String [view]]) -> int [local, mut] {
 
 }
 ```
