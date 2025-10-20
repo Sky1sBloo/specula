@@ -302,7 +302,7 @@ Capabilities handle the lifetime and scope of the variables
 ```
 thread testThread(param: int[copy])
 {
-    let x: List[int] [thr_loc, mut] = [];
+    let buffer: List[int] [thr_loc, mut] = [];
     for i in 0..5 {
         buffer.push(i);
         sleep(100ms);
