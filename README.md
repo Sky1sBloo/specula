@@ -63,7 +63,7 @@ send/receive [identifier] { [params] } @BeforeState -> AfterState;
 The difference on this from *Contract Message Events* is its usually an event not requiring a message sent from a client or a server. This are purely server sided.
 | Event | Description |
 | ----- | ----------- |
-| fail::fail_name | Definition of a failure mode (always server side call) |
+| fail::fail_name | Definition of a failure mode |
 | auto-reset | Resets back to initial state before or after a state |
 | auto-move  | Auto moves on statement |
 
@@ -115,6 +115,7 @@ Like *Contract Events* it doesn't require a message sent from a client to server
 | ----- | ----------- |
 | after | Happens after a `message event` is called|
 | before | Happens before a `message event` is called|
+
 Usage of `before` and `after` is like this:
 ```
 before [state] {}
