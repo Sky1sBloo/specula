@@ -17,6 +17,8 @@ failure recovery policy. This is generally only defined in the server.
 
 ``` 
 contract MotionControl {
+    init-state Idle;
+
     state Idle <-> CommandSent -> Acknowledged -> Completed;
     state CommandSent -> Idle;
     state Idle -> Completed;
@@ -47,6 +49,9 @@ listener target 0.0.0.0:5050 using MotionControl as Server {
     }
 }
 ```
+### States
+This is the main feature of the contracts. State maneuvers is always caused by **events** and **message events**. An `init-state` must be defined, 
+with arrows pointing to the next states with either uni-directional (`->`) or bi-directional (`->`) transitions.
 
 ### Contract Message Events
 | Event | Description |
