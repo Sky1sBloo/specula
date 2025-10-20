@@ -126,6 +126,7 @@ after [state] {}
 This defines failure implementation on a contract. Unlike message events, these are always server side.
 The syntax for defining fail events is similar to message events, but with parenthesis as params and with a `fail::` before the failure name. 
 > Params in fail events should always be using () and not {}
+
 > Calling a fail event will skip the remaining statements in that message event like a `throw`
 
 ```
