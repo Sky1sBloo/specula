@@ -284,7 +284,7 @@ Similar to Rust's `traits`, it defines **function declarations**
 interface Vector {
     fn add(other: self[view]): self;
     fn sub(other: self[view]): self;
-can a implement use itself like this}
+}
 ```
 
 ### Impl
