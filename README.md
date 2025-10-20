@@ -13,7 +13,7 @@ fn main(args: Array[String])
 ## Contract Handshaking
 Contracts are basically protocols or traits like in `rust`. They define api's that can be used in code.
 The difference is that they are stateful, they describe not just what data is exchanged, but its sequence and
-failure recovery policy
+failure recovery policy. This is generally only defined in the server.
 
 ``` 
 contract MotionControl {
@@ -30,14 +30,16 @@ contract MotionControl {
 }
 
 listener target 0.0.0.0:5050 using MotionControl as Server {
-    on MoveCommand { direction, speed } -> Acknowledged {
+    on MoveCommand { direction, speed } {
         if (battery < 20.0) fail low_battery;
         print("Moving", direction, "at", speed);
         moveMotors(direction, speed);
         respond Ack(true);
-    }
+    } -> State (transition-based)
 
-    after Ack -> Completed {
+before/after → State
+
+    after Acknowledged {
         let pos = getPosition();
         respond Status(pos, battery);
     }
@@ -47,13 +49,116 @@ listener target 0.0.0.0:5050 using MotionControl as Server {
     }
 }
 ```
+
+### Contract Message Events
+| Event | Description |
+| ------ | ----------- |
+| send   | Client is sending, this event defines what should happen in the specific state |
+| recv   | Same with send, but the client is receiving |
+
+Definition of contract message event must be in
+```
+send/receive [identifier] { [params] } @BeforeState -> AfterState;
+```
+
+### Contract Events
+The difference on this from *Contract Message Events* is its usually an event not requiring a message sent from a client or a server. This are purely server sided.
+| Event | Description |
+| ----- | ----------- |
+| fail::fail_name | Definition of a failure mode (always server side call) |
+| auto-reset | Resets back to initial state before or after a state |
+| auto-move  | Auto moves on statement |
+
+#### auto-reset 
+Automatically resets back to initial state after a state is moved. Usage of auto-reset is:
+```
+auto-reset after [state];
+
+// For multiple states you can:
+auto-reset after [state1] | [state2] | [state3]
+```
+#### auto-move
+Automatically moves to a specific state. Usage of auto-move is:
+```
+auto-move after [state] to [target-state]
+
+// For multiple states you can:
+auto-move after [state1] | [state2] | [state3] to [target-state]
+```
+
 ## Listeners
 Listeners are implementations of contracts. They define implementation on actions and failure modes. The definition of a listener is listed here:
 ```
 listener target [url]:[port] using [contract] as [identifier] {
 }
 ```
-To use it, create use `listen` on it.
+
+### Listener Message Events 
+Listener defines events on the contract's `Contract Message Events`. To use these use the `on` keyword:
+```
+// [params] doesn't need type definition as its implied (but it's optional)
+on [event_name] { [params] } { 
+    [statements]
+}
+
+
+// ex.
+on MoveCommand { direction, speed } {
+    if (battery < 20.0) fail low_battery;
+    print("Moving", direction, "at", speed);
+    moveMotors(direction, speed);
+    respond Ack(true);
+}
+```
+
+### Listener Events
+Like *Contract Events* it doesn't require a message sent from a client to server, purely transitions from States calls this
+| Event | Description |
+| ----- | ----------- |
+| after | Happens after a `message event` is called|
+| before | Happens before a `message event` is called|
+Usage of `before` and `after` is like this:
+```
+before [state] {}
+after [state] {}
+```
+
+### Listener Fail Events 
+This defines failure implementation on a contract. Unlike message events, these are always server side.
+The syntax for defining fail events is similar to message events, but with parenthesis as params and with a `fail::` before the failure name. 
+> Params in fail events should always be using () and not {}
+> Calling a fail event will skip the remaining statements in that message event like a `throw`
+
+```
+on fail::[identifier] ( [params] ) {
+
+}
+
+// General call without params 
+fail [identifier];
+
+// If it contains params
+fail [identifier]([param_values]);
+```
+
+#### Moving states after fail
+You can move to a specific state when approaching a fail with a `->` operator.
+```
+// Just move to a new state
+on fail::[identifier] -> [target_state];
+
+// Move after statement
+on fail::[identifier] (params) { } -> [target_state];
+```
+
+### Differences between { } and ( ) in message events and fail events
+To note, message events uses { } and fail events uses ( ) as parameter containers.
+The reason is that message events are similar to struct containers which are data being passed from a different client. 
+Fail events are like function calls, which are generally locally called by the server.
+
+
+### Using Listeners
+To use listeners use `listen` on it.
 ```
 fn main()
 {
