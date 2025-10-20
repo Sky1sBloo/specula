@@ -296,7 +296,7 @@ impl Vector using Vector2 {
             x: this.x + other.x,
             y: this.y + other.y
         };
-    }can a implement use itself like this
+    }
 
     fn sub(other: Vector2[view]): Vector2 {
         ret Vector2 { 
