@@ -263,3 +263,64 @@ To import add it as a top level statement
 import { toExport } from "extra.spc"; //  imports toExport
 import Extra from "extra.spc";  // imports defaultFunc
 ```
+
+## Objects
+The language is not a fully focused OOP, but it supports object like behaviour using `struct`, `interface`, and `impl`.
+Similar to Rust's `struct`, `traits`, `impl`, this makes the language focus more on composition rather than inheritance.
+This improves compile time guarantees and avoids class hierarchies.
+
+### Struct
+An object containing only **data**
+```
+struct Vector2 {
+    let x: int [mut];
+    let y: int [mut];
+}
+```
+
+### Interface
+Similar to Rust's `traits`, it defines **function declarations**
+```
+interface Vector {
+    fn add(other: self[view]): self;
+    fn sub(other: self[view]): self;
+can a implement use itself like this}
+```
+
+### Impl
+Similar to Rust's `impl`, it **defines functions** of an interface connecting structs. 
+```
+impl Vector using Vector2 {
+    fn add(other: Vector2[view]): Vector2 {
+        ret Vector2 { 
+            x: this.x + other.x,
+            y: this.y + other.y
+        };
+    }can a implement use itself like this
+
+    fn sub(other: Vector2[view]): Vector2 {
+        ret Vector2 { 
+            x: this.x - other.x,
+            y: this.y - other.y
+        };
+    }
+}
+```
+
+### Example Usage
+```
+fn main() {
+    let vec1 = Vector2 { x: 5, y: 2};
+    let vec2 = Vector2 { x: 3, y: 5};
+    let result = vec1.add(vec2);
+    print(result.x);
+    print(result.y);
+}
+```
+
+### Difference between "this" and "self"
+| Keyword | Meaning |
+| ------- | ------- |
+| self | refers to a type that will be used to an `impl`. Its generally used by `interface`. So if `impl` uses `Vector2`, self will turn into `Vector2`. |
+| this | refers to the current instance itself. It contains the data owned by the `struct` itself. |
+
