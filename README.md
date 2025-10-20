@@ -51,7 +51,7 @@ listener target 0.0.0.0:5050 using MotionControl as Server {
 ```
 ### States
 This is the main feature of the contracts. State maneuvers is always caused by **events** and **message events**. An `init-state` must be defined, 
-with arrows pointing to the next states with either uni-directional (`->`) or bi-directional (`->`) transitions.
+with arrows pointing to the next states with either uni-directional (`->`) or bi-directional (`<->`) transitions.
 
 ### Contract Message Events
 | Event | Description |
@@ -264,7 +264,7 @@ Capability | Owns Data | Can Transfer Ownership | Can be shared | Can be viewed
 |---|---|---|---|---|
 `[own]` | / | | | / |
 `[move]` | / | / | | |
-`[ref]` | / | | / | / |
+`[shared]` | / | | / | / |
 `[view]` | | | / | / |
 
 
