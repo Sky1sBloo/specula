@@ -37,8 +37,6 @@ listener target 0.0.0.0:5050 using MotionControl as Server {
         respond Ack(true);
     } -> State (transition-based)
 
-before/after → State
-
     after Acknowledged {
         let pos = getPosition();
         respond Status(pos, battery);
