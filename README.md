@@ -300,10 +300,10 @@ Capabilities handle the lifetime and scope of the variables
 
 ## Multi threading
 ```
-thread testThread(param: int[copy])
+thread testThread(param: int[view])
 {
     let buffer: List[int] [thr_loc, mut] = [];
-    for i in 0..5 {
+    for (let i = 0; i < param; i++) {
         buffer.push(i);
         sleep(100ms);
     }
