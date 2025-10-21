@@ -254,6 +254,14 @@ let b: [view] = ref a;
 ```
 Nested reference will ultimately point to its original owner.
 
+### Sharing ownership of data
+In variables with `[shared]`, you can share ownership with other `[shared]` with the `share` keyword.
+```
+let a: int [shared] = 5;
+let b: int [shared] = a;  // Copy
+let b: int [shared] = share a;  // Increases reference counter
+```
+
 ### Non ownership of data
 Using `[view]` will ensure that the variable will never own the data.
 Passing a variable with `[view]` capability will point to its owner.
